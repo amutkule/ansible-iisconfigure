@@ -1,0 +1,44 @@
+---
+- name: Set up IIS server and configure website
+  hosts: target_servers
+  become: yes
+
+  tasks:
+    - name: Install IIS
+      win_feature:
+        name: Web-Server
+        state: present
+
+    - name: Start IIS service
+      win_service:
+        name: W3SVC
+        state: started
+        enabled: yes
+
+    - name: Install IIS Manager
+      win_chocolatey:
+        name: iismanager
+        state: present
+
+    - name: Create website directory
+      win_file:
+        path: C:\inetpub\wwwroot\mywebsite
+        state: directory
+
+    - name: Copy website files
+      win_copy:
+        src: /path/to/website/files/
+        dest: C:\inetpub\wwwroot\mywebsite
+        force: yes
+
+    - name: Configure website
+      win_iis_website:
+        name: MyWebsite
+        state: started
+        bindings:
+          - protocol: http
+            ip_address: "*"
+            port: 80
+            hostname: mywebsite.com
+        application_pool: DefaultAppPool
+        physical_path: C:\inetpub\wwwroot\mywebsite
