@@ -42,3 +42,15 @@
             hostname: mywebsite.com
         application_pool: DefaultAppPool
         physical_path: C:\inetpub\wwwroot\mywebsite
+        
+     - name: Create application pool
+      win_iis_webapppool:
+        name: MyAppPool
+        state: present
+        managed_runtime_version: v4.0
+        pipeline_mode: Integrated
+        
+     - name: Remove default application pool
+      win_iis_webapppool:
+        name: DefaultAppPool
+        state: absent
